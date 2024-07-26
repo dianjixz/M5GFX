@@ -417,8 +417,11 @@ namespace lgfx
 
     int32_t xAdvance = sx * pgm_read_byte(&glyph_->xAdvance) >> 16;
     int32_t xoffset  = sx * ((int8_t)pgm_read_byte(&glyph_->xOffset)) >> 16;
-
+#ifdef LGFX_LINUX_FB
+    uint32_t colortbl[2] = {style->back_rgb888, style->fore_rgb888};
+#else
     uint32_t colortbl[2] = {gfx->getColorConverter()->convert(style->back_rgb888), gfx->getColorConverter()->convert(style->fore_rgb888)};
+#endif    
     bool fillbg = (style->back_rgb888 != style->fore_rgb888);
     int32_t left  = 0;
     int32_t right = 0;

@@ -42,19 +42,13 @@ namespace lgfx
     uint8_t r = 0, g = 0, b = 0;
 
     // GGGBBBBB RRRRRGGG
-    if (_write_depth = color_depth_t::rgb565_2Byte)
+    if (_write_depth == color_depth_t::rgb565_2Byte)
     {
-      b = (uint8_t)((rawcolor >> 8) & 0b11111);
-      g = (uint8_t)((((rawcolor >> 10) & 0b111000)) | (rawcolor & 0b111));
-      r = (uint8_t)((rawcolor >> 3) & 0b11111);
-
-      pix_offset = x * 2 + y * _fix_info.line_length;
-      unsigned short c = (r << 11) | (g << 5) | b;
-      // write 'two bytes at once'
-      *((unsigned short*)(_fbp + pix_offset)) = c;
+      unsigned short * pix_p = (unsigned short *)_fbp;
+      pix_p[y * _var_info.xres + x] = (unsigned short)rawcolor;
     }
     // BBBBBBBB GGGGGGGG RRRRRRRR
-    else if (_write_depth = color_depth_t::rgb888_3Byte)
+    else if (_write_depth == color_depth_t::rgb888_3Byte)
     {
       b = (uint8_t)((rawcolor >> 16) & 0xff);
       g = (uint8_t)((rawcolor >> 8) & 0xff);
@@ -249,9 +243,9 @@ namespace lgfx
       if (rotation & 1) { std::swap(x, y); }
     }
 
-    for (size_t width = 0; width < w; width++)
+    for (size_t height = 0; height < h; height++)
     {
-      for (size_t height = 0; height < h; height++)
+      for (size_t width = 0; width < w; width++)
       {
         uint_fast16_t x_pos = x + width;
         uint_fast16_t y_pos = y + height;
